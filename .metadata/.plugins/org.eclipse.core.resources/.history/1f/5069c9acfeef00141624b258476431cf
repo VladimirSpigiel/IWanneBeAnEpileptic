@@ -1,0 +1,101 @@
+package Model;
+
+import java.io.Serializable;
+import java.util.Random;
+
+
+
+public class Grid implements Serializable {
+
+
+	
+	private int width;
+	private int height;
+	private Difficulty difficulty;
+	private int sizeCells;
+	public int test =  1 + new Random(5).nextInt(10);
+	private ColoredCell[][] cells;
+	
+	public int getSizeCells() {
+		return sizeCells;
+	}
+
+	public void setSizeCells(int sizeCells) {
+		this.sizeCells = sizeCells;
+	}
+
+	//private ArrayList<ColoredCell> cells;
+	
+
+	public int getWidth() {
+		return this.width;
+	}
+
+	protected void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return this.height;
+	}
+
+	protected void setHeight(int height) {
+		this.height = height;
+	}
+
+	/**
+	 * 
+	 * @param difficulte
+	 */
+	
+	
+	
+	public Grid(Difficulty difficulte) {
+		this.difficulty = difficulte;
+		this.setWidth(difficulty.getWidth());
+		
+		//this.cells = new ArrayList<ColoredCell>();
+		this.cells = new ColoredCell[this.getHeight()][this.getWidth()];
+		
+		Random generator = new Random(5);
+		
+		for(int y=0; y < getHeight(); y++){
+			for(int x=0; x < getWidth(); x++){
+				this.cells[y][x] = new ColoredCell(x, y, this.getSizeCells(), generator);
+			}
+		}
+	
+			
+	}
+
+	/**
+	 * 
+	 * @return 
+	 */
+	public Color getRandomColor() {
+		
+		return this.getCells()[new Random().nextInt(getHeight())][new Random().nextInt(getWidth())].getColor();
+
+	}
+
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public Cell getCellAt(int x, int y) {
+		if(x < getWidth() && y < getHeight())
+			return getCells()[y][x];
+		return null;
+	}
+	
+	public ColoredCell[][] getCells(){
+		//System.out.println(this.cells);
+		return this.cells;
+	}
+	
+	public String toString(){
+		return this.getCellAt(0, 0) + " AND " + this.getCellAt(getWidth()-1, getHeight()-1);
+	}
+
+}

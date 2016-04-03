@@ -1,0 +1,23 @@
+package Behavior.BehaviorsClientSide;
+
+
+import kernel.Game;
+import Controller.StateControllerLobby;
+import Model.Client;
+
+
+public class OnJoined extends BehaviorClient {
+
+	public OnJoined(Client c) {
+		super(c, false);
+	}
+
+	@Override
+	public void execute() {
+		Game.getInstance().push(new StateControllerLobby(Game.getViewFactory().createViewLobby()));
+		
+	}
+	
+	
+
+}

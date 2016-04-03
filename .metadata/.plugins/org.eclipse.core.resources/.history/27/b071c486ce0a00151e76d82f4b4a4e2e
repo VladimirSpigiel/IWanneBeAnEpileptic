@@ -1,0 +1,114 @@
+package Controller;
+
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+
+import utils.Formats;
+import kernel.Game;
+import Model.Client;
+import Model.Difficulty;
+import Model.Server;
+import View.IObservable;
+import event.KeyEvent;
+import event.MouseEvent;
+
+public class StateControllerCreateGame extends AbstractStateController {
+
+	public StateControllerCreateGame(IObservable v) {
+		super(v);
+		// TODO Auto-generated constructor stub
+	}
+
+
+
+	public void update() {
+		// Nothing
+	}
+
+	/**
+	 * 
+	 * @param e
+	 */
+	public void MouseClicked(MouseEvent e) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * 
+	 * @param e
+	 */
+	public void KeyPressed(KeyEvent e) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void keyPressed(java.awt.event.KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void keyReleased(java.awt.event.KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void keyTyped(java.awt.event.KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mouseClicked(java.awt.event.MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mouseEntered(java.awt.event.MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mouseExited(java.awt.event.MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mousePressed(java.awt.event.MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mouseReleased(java.awt.event.MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void actionPerformed(ActionEvent arg0) {
+		if(arg0.getActionCommand() == "Retour"){
+			Game.getInstance().pop();
+			System.out.println("clicked");
+		}else if(arg0.getActionCommand() == "Creer"){
+			try {
+				String difficulty = Formats.toString(this.view.getData("difficulty"));
+				int capacity = Integer.parseInt(Formats.toString(this.view.getData("capacity")));
+				
+				Difficulty difficultyTranslated = Difficulty.EASY;
+				if(difficulty.equals("facile")) difficultyTranslated = Difficulty.EASY;
+				else if(difficulty.equals("normal")) difficultyTranslated = Difficulty.MEDIUM;
+				else if(difficulty.equals("difficile")) difficultyTranslated = Difficulty.HARD;
+								
+								
+				Game.getInstance().setServer(new Server(difficultyTranslated, capacity));
+				Game.getInstance().getServer().start();
+				Game.getInstance().setClient(new Client("127.0.0.1", 4400));
+								
+				Game.getInstance().getClient().send("join", Game.getInstance().getPlayer());
+				
+				Game.getInstance().setHostApplication(true);
+				Game.getInstance().push(new StateControllerLobby(Game.getViewFactory().createViewLobby()));
+			} catch (IOException e) {
+				e.printStackTrace();
+				// ecrire erreur sur la vue
+			}
+		}
+	}
+
+}

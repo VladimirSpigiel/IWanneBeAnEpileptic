@@ -1,0 +1,5 @@
+package Behavior.BehaviorsClientSide;
+
+public class OnBegan extends BehaviorClient {
+
+}

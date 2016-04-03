@@ -1,0 +1,18 @@
+package Model;
+
+public class OnPlayerReceive extends Behavior {
+
+	
+	private Player player;
+	
+	public OnPlayerReceive(Server s) {
+		super(s);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void execute() {
+		this.getServer().get		
+	}
+
+}

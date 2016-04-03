@@ -1,0 +1,25 @@
+package BehaviorsClientSide;
+
+import kernel.Game;
+import Controller.StateControllerDisconnected;
+import Model.Client;
+import Model.Grid;
+
+public class OnDisconnect extends BehaviorClient {
+
+	public OnGrid(Client c) {
+		super(c, true);
+	}
+
+	@Override
+	public void execute() {
+		if(! Game.getInstance().isHostApplication())
+			Game.getInstance().push(new StateControllerDisconnected(Game.getViewFactory().createViewDisconnected()));
+		
+		serverClosed = true;
+		
+		this.join();
+	}
+	
+	
+}

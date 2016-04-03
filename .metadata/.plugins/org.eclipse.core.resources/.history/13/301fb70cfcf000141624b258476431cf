@@ -1,0 +1,17 @@
+package Model;
+
+import java.util.TimerTask;
+
+public class ServerTimerTasks extends TimerTask {
+
+	public ServerTimerTasks() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

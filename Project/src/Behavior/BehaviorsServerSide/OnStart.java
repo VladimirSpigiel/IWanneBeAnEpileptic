@@ -1,0 +1,21 @@
+package Behavior.BehaviorsServerSide;
+
+import Model.Fight;
+import Model.Server;
+
+public class OnStart extends BehaviorServer {
+
+	public OnStart(Server s) {
+		super(s, false);
+	}
+
+	@Override
+	public void execute() {
+		Fight f = new Fight(server, server.getDifficulty());
+		server.setFight(f);
+		f.newRound();
+	
+		server.broadcast("start", null);		
+	}
+
+}

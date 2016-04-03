@@ -1,0 +1,25 @@
+package BehaviorsServerSide;
+
+import Model.Player;
+import Model.Server;
+
+public class OnJoin extends BehaviorServer {
+
+	public OnJoin(Server s) {
+		super(s, true);
+	}
+
+	@Override
+	public void execute() {
+		Player p = (Player) o;
+		p.setAlive(true);
+		this.players.add(p);
+		send("joined", null, s);
+		send("renamed", p, s);
+		
+		broadcast("players", players);		
+	}
+	
+	
+
+}

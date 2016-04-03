@@ -1,0 +1,11 @@
+package Model;
+
+public enum Difficulty {
+	
+	private int width;
+	private int height;
+	
+	private Difficulty(){
+		
+	}
+}

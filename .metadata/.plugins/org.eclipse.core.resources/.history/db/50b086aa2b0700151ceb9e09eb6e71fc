@@ -1,0 +1,21 @@
+package BehaviorsServerSide;
+
+import Model.Player;
+import Model.Server;
+
+public class OnDisconnect extends BehaviorServer {
+
+	public OnDisconnect(Server s) {
+		super(s, true);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void execute() {
+		Player p = (Player) o;
+		this.players.remove(p);
+		broadcast("players", players);
+		
+	}
+
+}

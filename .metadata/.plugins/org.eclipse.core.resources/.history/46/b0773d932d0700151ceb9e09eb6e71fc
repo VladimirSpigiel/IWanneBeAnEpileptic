@@ -1,0 +1,276 @@
+package Model;
+
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimerTask;
+import java.util.Map.Entry;
+
+
+
+
+
+
+import java.util.Random;
+import java.util.Timer;
+
+import javax.swing.text.DefaultEditorKit.BeepAction;
+
+import Behavior.Behavior;
+import BehaviorsServerSide.*;
+import utils.Debug;
+import kernel.Game;
+
+public class Server extends ServerSocket implements Runnable {
+
+	private Thread thread;
+	private boolean isRunning;
+	
+	
+
+	protected int capacity;
+	protected int port;
+	protected PlayerList players;
+	protected Map<String, SocketHandler> sockets;
+	protected Map<String, BehaviorServer> comportements;
+	private String command;
+	protected Fight fight;
+	protected Difficulty difficulty;
+	
+	
+	
+	
+	
+	public Server(Difficulty d, int capacity) throws IOException {
+		super(4400);
+		thread = new Thread(this);
+		isRunning = false;
+		
+		this.difficulty = d;
+		this.capacity = capacity;
+		
+		players = new PlayerList();		
+		sockets = new HashMap<String, SocketHandler>();
+		
+		comportements = new HashMap<String, BehaviorServer>();
+		comportements.put("player", new OnPlayer(this));
+		comportements.put("join", new OnJoin(this));
+		comportements.put("start", new OnStart(this));
+		comportements.put("disconnect", new OnDisconnect(this));
+		comportements.put("disconnect", new OnDisconnect(this));
+
+				
+		command = "";
+
+	}
+	
+	public void start(){
+		thread.start();
+		isRunning = true;
+		System.out.println("Server started");
+	}
+	
+	public PlayerList getPlayerList(){
+		return this.players;
+	}
+	
+	public Map<String, SocketHandler> getSocketsHandler(){
+		return this.sockets;
+	}
+	
+	public  synchronized void send(String message, Object o, SocketHandler s){
+
+		try {		
+			
+			s.getOutput().writeObject(message);
+			s.getOutput().flush();
+			if(o != null){
+				
+				
+				s.getOutput().writeObject(o);
+				s.getOutput().flush();
+				s.getOutput().reset();
+				
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	public void broadcast(String message, Object o) {
+		
+		
+		for (Entry<String, SocketHandler> socket : sockets.entrySet()){
+						
+			send(message, o, socket.getValue());
+		}
+	}
+	
+	public void broadcast(String message, Object o, Socket s){
+		for (Entry<String, SocketHandler> socket : sockets.entrySet()){
+			if( socket.getValue().getSocket().getPort() != s.getPort()){
+				send(message, o, socket.getValue());
+			}
+		}			
+	}
+	
+
+	
+	public void addSocket(Socket s){
+		if( sockets.size() + 1 < capacity)
+			sockets.put(String.valueOf(s.getPort()), new SocketHandler(s, this));
+		else{
+			try {
+				ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+				out.writeObject("full");
+				s.getOutputStream().flush();
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+			
+	}
+	
+	public void removeSocket(Socket s){
+		sockets.remove(String.valueOf(s.getPort()));
+		try {
+			s.close();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	
+	public Fight getFight() {
+		return fight;
+	}
+
+	public void setFight(Fight fight) {
+		this.fight = fight;
+	}
+	
+	
+
+	public Difficulty getDifficulty() {
+		return difficulty;
+	}
+
+	public void setDifficulty(Difficulty difficulty) {
+		this.difficulty = difficulty;
+	}
+
+	public void react(Object o, SocketHandler s){
+		
+		
+		/* ------------------------------ TRAITE LES DONNEES ATTENDUES ----------------------- */
+		try{
+			if(command.equals("join")){
+				Player p = (Player) o;
+				p.setAlive(true);
+				this.players.add(p);
+				send("joined", null, s);
+				send("renamed", p, s);
+				
+				broadcast("players", players);
+				command = "";
+			}else if(command.equals("disconnect")){
+				Player p = (Player) o;
+				this.players.remove(p);
+				broadcast("players", players);
+				command = "";
+			}else if(command.equals("player")){
+				Player p = (Player) o;
+				
+				/*this.players.replace(p);
+				broadcast("players", players, s.getSocket());*/
+				//broadcast("player", p);
+				command="";
+			}
+		}catch(ClassCastException e){
+			// Nothing to do. Avoid errors.
+		}
+		/* ------------------------------ ANALYSE LA DONNEE ATTENDUE ----------------------- */
+		try{
+			String message = (String) o;
+			if(message.equals("join")){
+				command = "join";
+			}else if(message.equals("disconnect")){
+				command = "disconnect";
+			}else if(message.equals("player")){
+				command = "player";
+			}else if (message.equals("start")){
+				this.fight = new Fight(this, this.difficulty);
+				this.fight.newRound();
+				
+	
+				broadcast("start", null);
+				command ="";
+			}else if(message.equals("acceptEndOfRound")){
+				
+				command ="";
+			}
+			//System.out.println(message);
+		}catch(ClassCastException e){
+			// Nothing to do. Avoid errors.
+		}
+		
+	}
+	
+	
+
+	public void run() {
+		while(isRunning && this.thread.isAlive()){
+			//System.out.println(sockets.size() + " connecté ");
+			try {
+			
+				Socket s = this.accept();
+				this.addSocket(s);	
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}	
+		
+	}
+	
+	public void disconnect(){
+		broadcast("disconnect", null);
+		
+					
+		
+		try {
+			
+			super.close();
+			isRunning = false;
+			this.thread.stop();
+			
+			
+		} catch ( IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+
+}

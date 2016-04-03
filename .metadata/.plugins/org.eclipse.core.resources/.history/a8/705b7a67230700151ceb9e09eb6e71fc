@@ -1,0 +1,54 @@
+package app;
+
+
+
+import java.io.IOException;
+
+import BehaviorsServerSide.Behavior;
+import BehaviorsServerSide.OnPlayerReceive;
+import Controller.StateControllerLogin;
+import Model.Client;
+import Model.Color;
+import Model.ColoredCell;
+import Model.Difficulty;
+import Model.Grid;
+import Model.Player;
+import Model.PlayerList;
+import Model.Server;
+import kernel.Game;
+
+
+
+
+public class main {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		/*Game.getInstance().push(new StateControllerLogin(Game.getViewFactory().createViewLogin()));
+		Game.getInstance().start();
+		
+		Runtime.getRuntime().addShutdownHook( new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Game.getInstance().dispose();
+				
+			}
+		}));*/
+		
+		try {
+			Server s = new Server(Difficulty.EASY, 5);
+			s.start();
+			
+			
+			Client c = new Client("127.0.0.1", 4400);
+			c.send("player", null);
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
+	}
+}

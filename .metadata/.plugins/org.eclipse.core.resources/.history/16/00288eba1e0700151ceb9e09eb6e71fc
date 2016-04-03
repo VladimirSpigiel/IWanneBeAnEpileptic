@@ -1,0 +1,26 @@
+package Model;
+
+import Model.Server;
+
+public abstract class Behavior<String> {
+	
+	private Server server;
+	
+	public Behavior(Server s){
+		server = s;
+	}
+	
+	public abstract void execute();
+
+	public Server getServer() {
+		return server;
+	}
+
+	public void setServer(Server server) {
+		this.server = server;
+	}
+
+	
+	
+	
+}

@@ -1,0 +1,27 @@
+package BehaviorsClientSide;
+
+import kernel.Game;
+import Controller.StateControllerPlaying;
+import Model.Client;
+import Model.Color;
+
+public class OnColor extends BehaviorClient {
+
+	public OnColor(Client c) {
+		super(c, true);
+	}
+
+	@Override
+	public void execute() {
+		Color c = (Color) getObject();
+		Game.getInstance().setColorChosen(c);
+		StateControllerPlaying state;
+		
+		if(Game.getInstance().peek() instanceof StateControllerPlaying){
+			 state = (StateControllerPlaying) Game.getInstance().peek();
+			 state.endOfRound(false);
+		}
+	}
+	
+	
+}

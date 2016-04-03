@@ -1,0 +1,21 @@
+package BehaviorsServerSide;
+
+import Model.Server;
+
+public class BehaviorServer extends Behavior {
+	
+	protected Server server;
+	
+	public Behavior(Server s, boolean needObject){
+		server = s;
+		this.needObject = needObject;
+	}
+	
+	
+	@Override
+	public void execute() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

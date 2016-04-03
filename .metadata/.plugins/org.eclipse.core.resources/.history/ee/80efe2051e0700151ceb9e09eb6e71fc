@@ -1,0 +1,33 @@
+package Model;
+
+public abstract class Behavior {
+	
+	private Server server;
+	private boolean finished;
+	
+	public Behavior(Server s){
+		server = s;
+		finished = false;
+	}
+	
+	public abstract void execute();
+
+	public Server getServer() {
+		return server;
+	}
+
+	public void setServer(Server server) {
+		this.server = server;
+	}
+
+	public boolean isFinished() {
+		return finished;
+	}
+
+	public void setFinished(boolean finished) {
+		this.finished = finished;
+	}
+	
+	
+	
+}

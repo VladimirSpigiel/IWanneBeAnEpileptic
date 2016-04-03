@@ -1,0 +1,234 @@
+package Model;
+
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimerTask;
+import java.util.Map.Entry;
+
+
+
+
+
+
+import java.util.Random;
+import java.util.Timer;
+
+import javax.swing.text.DefaultEditorKit.BeepAction;
+
+import utils.Debug;
+import kernel.Game;
+
+public class Server extends ServerSocket implements Runnable {
+
+	private Thread thread;
+	private boolean isRunning;
+	
+	
+	
+	protected int difficulty;
+	protected int capacity;
+	protected int port;
+	protected PlayerList players;
+	protected Map<String, SocketHandler> sockets;
+	private String command;
+	
+	protected Grid grid;
+	protected Color chosenColor;
+	protected int timer;
+	protected int timerMax;
+	protected int roundCounter;
+	
+	public Server(int difficulty, int capacity) throws IOException {
+		super(4400);
+		thread = new Thread(this);
+		isRunning = false;
+		
+		this.difficulty = difficulty;
+		this.capacity = capacity;
+		
+		players = new PlayerList();		
+		sockets = new HashMap<String, SocketHandler>();
+				
+		command = "";
+		roundCounter = 0;
+		
+	}
+	
+	public void start(){
+		thread.start();
+		isRunning = true;
+		System.out.println("Server started");
+	}
+	
+	public  synchronized void send(String message, Object o, SocketHandler s){
+
+		try {		
+			
+			s.getOutput().writeObject(message);
+			s.getOutput().flush();
+			if(o != null){
+				
+				
+				s.getOutput().writeObject(o);
+				s.getOutput().flush();
+				s.getOutput().reset();
+				
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	public void broadcast(String message, Object o) {
+		
+		
+		for (Entry<String, SocketHandler> socket : sockets.entrySet()){
+						
+			send(message, o, socket.getValue());
+		}
+	}
+	
+	public void broadcast(String message, Object o, Socket s){
+		for (Entry<String, SocketHandler> socket : sockets.entrySet()){
+			if( socket.getValue().getSocket().getPort() != s.getPort()){
+				send(message, o, socket.getValue());
+			}
+		}			
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void stop(){
+	
+			thread.stop();
+			try {
+				super.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				
+			}
+			isRunning = false;
+			System.out.println("Sever stopped");
+	
+	}
+	
+	public void addSocket(Socket s){
+		if( sockets.size() <= capacity)
+			sockets.put(String.valueOf(s.getPort()), new SocketHandler(s, this));
+	}
+	
+	public void removeSocket(Socket s){
+		sockets.remove(String.valueOf(s.getPort()));
+		try {
+			s.close();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void react(Object o, SocketHandler s){
+		
+		
+		/* ------------------------------ TRAITE LES DONNEES ATTENDUES ----------------------- */
+		try{
+			if(command.equals("join")){
+				Player p = (Player) o;
+							
+				this.players.add(p);
+				broadcast("players", players);
+				command = "";
+			}else if(command.equals("disconnect")){
+				Player p = (Player) o;
+				this.players.remove(p);
+				broadcast("players", players);
+				command = "";
+			}else if(command.equals("player")){
+				Player p = (Player) o;
+				this.players.replace(p);
+				broadcast("players", players);
+				command="";
+			}
+		}catch(ClassCastException e){
+			// Nothing to do. Avoid errors.
+		}
+		/* ------------------------------ ANALYSE LA DONNEE ATTENDUE ----------------------- */
+		try{
+			String message = (String) o;
+			if(message.equals("join")){
+				command = "join";
+			}else if(message.equals("disconnect")){
+				command = "disconnect";
+			}else if(message.equals("player")){
+				command = "player";
+			}else if (message.equals("start")){
+				
+				this.newRound();
+	
+				broadcast("start", null);
+				command ="";
+			}
+			//System.out.println(message);
+		}catch(ClassCastException e){
+			// Nothing to do. Avoid errors.
+		}
+		
+	}
+	
+	private void newRound(){
+		
+		if(roundCounter == 0)
+			timerMax = 7;
+		else
+			timerMax--;
+		
+		if(timerMax <= 2)
+			timerMax = 2;
+		
+		
+		this.grid = new Grid(Difficulty.MEDIUM, new Random());
+		chosenColor = grid.getRandomColor();
+		broadcast("grid", grid);
+		broadcast("color", chosenColor);
+		/*broadcast("timer", timer);
+		broadcast("newRound", null);*/
+		
+		
+		roundCounter++;
+		
+	}
+
+	public void run() {
+		while(isRunning){
+			//System.out.println(sockets.size() + " connecté ");
+			try {
+				Socket s = this.accept();
+				this.addSocket(s);	
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}	
+		
+	}
+	
+	
+
+}

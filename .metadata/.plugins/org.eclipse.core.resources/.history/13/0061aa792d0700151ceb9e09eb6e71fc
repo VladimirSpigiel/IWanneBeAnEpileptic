@@ -1,0 +1,16 @@
+package BehaviorsServerSide;
+
+import Model.Server;
+
+public class OnAcceptEndOfRound extends BehaviorServer {
+
+	public OnAcceptEndOfRound(Server s) {
+		super(s, false);
+	}
+
+	@Override
+	public void execute() {
+		this.fight.setAcceptEndOfRound(this.fight.getAcceptEndOfRound() + 1);		
+	}
+
+}

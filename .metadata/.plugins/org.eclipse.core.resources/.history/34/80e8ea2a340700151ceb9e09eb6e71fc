@@ -1,0 +1,16 @@
+package BehaviorsClientSide;
+
+import Model.Client;
+
+public class OnStart extends BehaviorClient {
+
+	public OnStart(Client c) {
+		super(c, false);
+	}
+
+	@Override
+	public void execute() {
+		
+	}
+
+}

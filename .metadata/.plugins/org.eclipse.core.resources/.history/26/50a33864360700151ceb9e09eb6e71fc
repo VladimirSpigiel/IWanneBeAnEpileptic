@@ -1,0 +1,43 @@
+package app;
+
+import Controller.StateControllerLogin;
+
+import kernel.Game;
+
+
+
+
+public class main {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Game.getInstance().push(new StateControllerLogin(Game.getViewFactory().createViewLogin()));
+		Game.getInstance().start();
+		
+		Runtime.getRuntime().addShutdownHook( new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Game.getInstance().dispose();
+				
+			}
+		}));
+		
+		/*try {
+			Server s = new Server(Difficulty.EASY, 5);
+			s.start();
+			
+			
+			Client c = new Client("127.0.0.1", 4400);
+			Player p = new Player("crayer");
+			Game.getInstance().setPlayer(p);
+			c.send("player", p);
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+			
+	}
+}

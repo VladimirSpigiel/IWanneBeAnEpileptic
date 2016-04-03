@@ -1,0 +1,21 @@
+package BehaviorsServerSide;
+
+import Model.Player;
+import Model.Server;
+
+public class OnPlayerReceive extends Behavior {
+
+	
+	public OnPlayerReceive(Server s) {
+		super(s);
+	}	
+	
+
+	@Override
+	public void execute() {		
+		/*server.getPlayerList().replace((Player) getObject());
+		server.broadcast("players", server.getPlayerList(), null);*/
+		System.out.println(server.getPlayerList());
+	}
+
+}

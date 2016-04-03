@@ -1,0 +1,133 @@
+package View.View2D;
+
+import java.awt.Color;
+import java.awt.Font;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+
+public class View2DCreateGame extends View2D {
+
+	
+	protected JPanel configuration;
+	protected JLabel description;
+	protected JComboBox<Integer> listNbrJoueurs;
+	protected JLabel nbrJoueurs;
+	protected JLabel difficulte;
+	protected JComboBox<String> listDifficulte;
+	protected JButton creerPartie;
+	
+	
+	public View2DCreateGame(){
+		configuration = new JPanel();
+		description = new JLabel("Configuration du serveur");
+		listNbrJoueurs = new JComboBox<Integer>();
+		nbrJoueurs = new JLabel("Nombre de joueurs maximum");
+		difficulte = new JLabel("Difficult\u00E9 de la partie");
+		listDifficulte = new JComboBox<String>();
+		creerPartie = new JButton("Creer");
+	}
+	
+	/**
+	 * 
+	 * @return 
+	 */
+	public void draw() {
+		throw new UnsupportedOperationException();
+	}
+	
+	protected void buildCreateGame(){
+		
+		configuration.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.RAISED, new Color(0, 0, 0), new Color(255, 255, 255), new Color(0, 0, 0), new Color(255, 255, 255)), null));
+		configuration.setBackground(Color.DARK_GRAY);
+		configuration.setBounds(297, 191, 406, 229);
+		mainLayout.add(configuration);
+		configuration.setLayout(null);
+		
+		
+		description.setFont(new Font("Tahoma", Font.BOLD, 15));
+		description.setHorizontalAlignment(SwingConstants.CENTER);
+		description.setForeground(Color.WHITE);
+		description.setBounds(10, 11, 209, 14);
+		configuration.add(description);
+		
+		
+		listNbrJoueurs.setModel(new DefaultComboBoxModel(new String[] {"5", "10", "15"}));
+		listNbrJoueurs.setBounds(20, 69, 40, 20);
+		configuration.add(listNbrJoueurs);
+		
+		
+		nbrJoueurs.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		nbrJoueurs.setForeground(Color.WHITE);
+		nbrJoueurs.setBounds(21, 52, 184, 14);
+		configuration.add(nbrJoueurs);
+		
+		
+		difficulte.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		difficulte.setForeground(Color.WHITE);
+		difficulte.setBounds(21, 104, 132, 14);
+		configuration.add(difficulte);
+		
+		
+		listDifficulte.setModel(new DefaultComboBoxModel(new String[] {"facile", "normal", "difficile"}));
+		listDifficulte.setBounds(21, 119, 72, 20);
+		configuration.add(listDifficulte);
+		
+		
+		
+		creerPartie.setBounds(13, 179, 381, 40);
+		configuration.add(creerPartie);
+		creerPartie.setIcon(new ImageIcon("res/Images/buttonCreerLaPartie.png"));
+		
+	}
+
+	/**
+	 * 
+	 * @param champ
+	 * @param donnee
+	 * @return 
+	 */
+	public void setData(String champ, byte[] donnee) {
+		throw new UnsupportedOperationException();
+	}
+
+
+	public byte[] getData(String name) {
+		if(name == "difficulty")
+			return listDifficulte.getSelectedItem().toString().getBytes();
+		else if(name == "capacity")
+			return listNbrJoueurs.getSelectedItem().toString().getBytes();
+		
+		
+		return null;
+	}
+
+	public void initListeners() {	
+		if(back.getActionListeners().length == 0)
+			back.addActionListener(this.getController());
+		if(creerPartie.getActionListeners().length == 0)
+			creerPartie.addActionListener(this.getController());
+		
+	}
+
+	public void build() {
+		
+		
+		buildMainLayout();
+		buildCreateGame();
+		buildFooterLayout();
+		buildBackground();
+		
+		repaint();
+		
+	}
+
+
+}

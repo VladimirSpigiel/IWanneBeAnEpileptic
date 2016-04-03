@@ -1,0 +1,64 @@
+package View.View2D;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Toolkit;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import kernel.Game;
+import View.View;
+
+public abstract class View2D extends View {
+	
+	protected JPanel mainLayout;
+	protected JLabel backgroundImage;
+	protected JButton back;
+	
+	public View2D(){
+		mainLayout = new JPanel();
+		backgroundImage = new JLabel("backgroundImage");
+		back = new JButton("Retour");
+	}
+	
+	protected void repaint(){
+		Game.getInstance().getWindow().getContentPane().repaint();
+	}
+	
+	protected void buildBackground(){
+		/* ------ WALLPAPER DU LAYOUT PRINCIPAL ------ */
+		
+		backgroundImage.setIcon(new ImageIcon(getClass().getResource("/Images/bg.png")));
+		backgroundImage.setFont(new Font("Arial", Font.BOLD, 21));
+		backgroundImage.setBounds(0, 0, 984, 586);
+		mainLayout.add(backgroundImage);
+	}
+	
+	protected void buildMainLayout(){
+		/* ------ LAYOUT PRINCIPAL ------ */
+		mainLayout.setBackground(Color.LIGHT_GRAY);
+		mainLayout.setBounds(0, 0, 984, 586);
+		mainLayout.setLayout(null);
+				
+		/* ------- AJOUTER LAYOUT PRINCIPAL AU LAYOUT PRIMAIRE ------- */
+		Game.getInstance().getWindow().getContentPane().add(mainLayout);
+		
+		
+		
+	}
+	
+	protected void buildFooterLayout(){
+		back.setFont(new Font("Tahoma", Font.PLAIN, 5));
+		back.setIcon(new ImageIcon("Images\\buttonRetour.png"));
+		back.setBounds(742, 464, 139, 38);
+		mainLayout.add(back);
+	}
+	
+	
+	public void clear(){
+		Game.getInstance().getWindow().getContentPane().removeAll();
+	}
+}

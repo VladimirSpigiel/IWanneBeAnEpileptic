@@ -1,0 +1,46 @@
+package BehaviorsServerSide;
+
+import Model.Server;
+
+public abstract class Behavior {
+	
+	protected Server server;
+	protected Object object;
+	private boolean needObject;
+	
+	
+	
+	public abstract void execute();
+
+	public Server getServer() {
+		return server;
+	}
+
+	public void setServer(Server server) {
+		this.server = server;
+	}
+
+	public Object getObject() {
+		return object;
+	}
+
+	public void setObject(Object object) {
+		this.object = object;
+	}
+
+	public boolean needObject() {
+		return needObject;
+	}
+
+	public void setNeedObject(boolean needObject) {
+		this.needObject = needObject;
+	}
+	
+	
+	
+	
+
+	
+	
+	
+}

@@ -1,0 +1,34 @@
+package View;
+
+
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.border.EmptyBorder;
+
+import Controller.AbstractStateController;
+import kernel.Game;
+
+
+public abstract class  View implements IObservable {
+	
+	private AbstractStateController controller;
+	
+	
+	public View(){
+		Game.getInstance().getWindow().getContentPane().removeAll();
+		Game.getInstance().getWindow().getContentPane().repaint();
+		
+		Game.getInstance().getWindow().setLocationRelativeTo(null);  		
+		Game.getInstance().getWindow().setVisible(true);
+		
+	}
+	
+	public AbstractStateController getController(){
+		return controller;
+	}
+	
+	public void setController(AbstractStateController ctrl){
+		controller = ctrl;
+	}
+
+}

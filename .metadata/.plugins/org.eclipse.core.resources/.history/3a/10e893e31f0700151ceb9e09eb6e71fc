@@ -1,0 +1,24 @@
+package BehaviorsServerSide;
+
+import Model.Player;
+import Model.Server;
+
+public class OnPlayerReceive extends Behavior {
+
+	
+	private Player player;
+	
+	public OnPlayerReceive(Server s) {
+		super(s);
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+
+	@Override
+	public void execute() {		
+		server.getPlayerList().replace(player);
+		server.broadcast("players", server.getPlayerList(), null);
+	}
+
+}

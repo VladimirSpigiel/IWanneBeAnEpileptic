@@ -1,0 +1,20 @@
+package BehaviorsClientSide;
+
+import kernel.Game;
+import Model.Client;
+import Model.Player;
+
+public class OnJoined extends BehaviorClient {
+
+	public OnJoined(Client c) {
+		super(c, false);
+	}
+
+	@Override
+	public void execute() {
+				
+	}
+	
+	
+
+}

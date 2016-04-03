@@ -1,0 +1,287 @@
+package View.View2D;
+
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.util.Map.Entry;
+
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
+
+import utils.Constants;
+import utils.Formats;
+import Model.ColoredCell;
+import Model.Grid;
+import Model.Player;
+import kernel.Game;
+
+public class View2DPlaying extends View2D {
+	
+	private final int CANVAS_WIDTH = Constants.WIDTH_CANVAS;
+	private final int CANVAS_HEIGHT = Constants.HEIGHT_CANVAS;
+
+	protected Canvas canvas;
+	protected JPanel panelJoueurs;
+	protected JLabel lblJoueursConnects;
+	protected JTextPane joueurs;
+	protected JPanel panelInformations;
+	protected JLabel labelInformationsTitre;
+	protected JLabel informations;
+	protected JPanel panelTemps;
+	protected JPanel panelCouleur;
+	protected JLabel lblObjectif;
+	protected JPanel couleur;
+	protected JLabel lblTempsRestant;
+	protected JLabel temps;
+	
+	
+	protected BufferedImage offImage = null; 
+	protected Graphics offGraphics; 
+	
+	public View2DPlaying(){
+		canvas = new Canvas();
+		panelJoueurs = new JPanel();
+		lblJoueursConnects = new JLabel("Joueurs connect\u00E9s");
+		joueurs = new JTextPane();
+		panelInformations = new JPanel();
+		labelInformationsTitre = new JLabel("Information : ");
+		informations = new JLabel("...");
+		panelTemps = new JPanel();
+		panelCouleur = new JPanel();
+		lblObjectif = new JLabel("Objectif ");
+		couleur = new JPanel();
+		lblTempsRestant = new JLabel("Temps restant");
+		temps = new JLabel("5");
+		
+		offImage = new BufferedImage(CANVAS_WIDTH, CANVAS_HEIGHT, BufferedImage.TYPE_INT_RGB);
+				
+		
+	}
+	
+	/**
+	 * 
+	 * @return 
+	 */
+	public void draw() {
+		
+			
+		//Graphics g = canvas.getGraphics();
+		Graphics g = offImage.getGraphics();
+		try{
+			
+			/* ----------------------------- AFFICHAGE DE LA GRILLE ----------------------- */
+			Grid grid = Game.getInstance().getGrid();
+			if(grid != null){
+				
+				for(int y=0; y < grid.getHeight(); y++){
+					for(int x=0; x < grid.getWidth(); x++){
+						ColoredCell c = grid.getCells()[y][x];
+						g.setColor(new Color(c.getColor().getR(), c.getColor().getG(), c.getColor().getB()));
+					
+						g.fillRect(c.getX(), c.getY(), c.getSize(), c.getSize());
+						//System.out.println(c.getX() + ", " + c.getX() + ", " + c.getSize());
+					}
+				}
+			
+			}
+			
+			/* ----------------------------- AFFICHAGE DES JOUEURS ----------------------- */
+			
+			
+			for (Entry<String, Player> player : Game.getInstance().getPlayers().getPlayers().entrySet()){
+				Player p = player.getValue();
+				
+				if(p.isAlive()){
+					
+					g.setColor(Color.BLACK);
+					g.setFont(new Font("Arial", Font.BOLD, 12));
+					g.drawString(p.getPseudo(), p.getX() - p.getPseudo().length() - 10, p.getY() -5);
+					
+					
+					g.fillArc(p.getX(), p.getY(), p.getSize(), p.getSize(), 0, 360);
+				}
+			}
+			
+			
+			
+			
+			/* --------------------------- RESTITUTION GRAPGHIQUE  ------------------------ */
+			if(canvas != null && canvas.getGraphics() != null &&  offImage != null){
+				canvas.getGraphics().drawImage(offImage, 0, 0, canvas);			
+			}
+				
+				
+	
+			
+		}catch(NullPointerException e){
+			// en try catch car instanciation et thread désynchronisé 
+			e.printStackTrace();
+		}
+		
+		/* ----------------------------- AFFICHAGE DE LA COULEUR CHOISIE  ----------------------- */
+		Model.Color colorChosen = Game.getInstance().getColorChosen();
+		if(colorChosen != null)
+			couleur.setBackground(new Color(colorChosen.getR(), colorChosen.getG(), colorChosen.getB()));
+		
+		
+		
+		/* ----------------------------- AFFICHAGE JOUEURS CONNECTES ----------------------------*/
+		String  s = "";
+		
+		for (Entry<String, Player> player : Game.getInstance().getPlayers().getPlayers().entrySet()){
+			String etat = "";
+			if(!player.getValue().isAlive())
+				etat = ": mort";
+			s = s + player.getValue().getPseudo() +" " + etat + "\r\n";
+		}
+		
+		joueurs.setText(s);
+	}
+
+	/**
+	 * 
+	 * @param champ
+	 * @param donnee
+	 * @return 
+	 */
+	public void setData(String champ, byte[] donnee) {
+		if(champ.equals("timer")){
+			temps.setText(Formats.toString(donnee));
+		}else if(champ.equals("winner")){
+			informations.setText(Formats.toString(donnee));
+			back.setVisible(true);
+		}else if(champ.equals("tie")){
+			informations.setText(Formats.toString(donnee));
+			back.setVisible(true);
+		}
+	}
+
+	public byte[] getData(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void initListeners() {
+		Game.getInstance().getWindow().getContentPane().setFocusable(true);
+		Game.getInstance().getWindow().getContentPane().requestFocus();
+		Game.getInstance().getWindow().getContentPane().requestFocusInWindow();
+		
+		for( KeyListener l : Game.getInstance().getWindow().getContentPane().getKeyListeners()){
+			Game.getInstance().getWindow().getContentPane().removeKeyListener(l);
+		}
+		
+		if(Game.getInstance().getWindow().getContentPane().getKeyListeners().length == 0)
+			Game.getInstance().getWindow().getContentPane().addKeyListener(getController());
+		
+		if(back.getActionListeners().length == 0){
+			back.addActionListener(getController());
+		}
+	}
+
+	public void build() {
+		buildMainLayout();
+		buildPlayingLayout();
+		
+		buildFooterLayout();
+		back.setBounds(431, 504, 137, 37);
+		back.setVisible(false);
+
+		buildBackground();
+		
+		repaint();
+	}
+	
+	
+	
+	protected void buildPlayingLayout(){
+		
+		
+		canvas.setBackground(Color.WHITE);
+		canvas.setBounds(262, 216, CANVAS_WIDTH, CANVAS_HEIGHT);
+		mainLayout.add(canvas);
+		
+		
+		
+		panelJoueurs.setBorder(new LineBorder(new Color(0, 0, 0), 3));
+		panelJoueurs.setBackground(Color.DARK_GRAY);
+		panelJoueurs.setBounds(704, 216, 176, 277);
+		mainLayout.add(panelJoueurs);
+		panelJoueurs.setLayout(null);
+		
+		lblJoueursConnects.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblJoueursConnects.setForeground(Color.WHITE);
+		lblJoueursConnects.setHorizontalAlignment(SwingConstants.CENTER);
+		lblJoueursConnects.setBounds(23, 11, 130, 14);
+		panelJoueurs.add(lblJoueursConnects);
+		
+		joueurs.setForeground(Color.GREEN);
+		joueurs.setFont(new Font("Tahoma", Font.BOLD, 13));
+		joueurs.setBackground(Color.DARK_GRAY);
+		joueurs.setBounds(10, 32, 156, 234);
+		joueurs.setEditable(false);
+		panelJoueurs.add(joueurs);
+		
+		
+		
+		panelInformations.setBorder(new LineBorder(Color.BLACK, 3, true));
+		panelInformations.setBackground(Color.GRAY);
+		panelInformations.setBounds(262, 450, 420, 43);
+		mainLayout.add(panelInformations);
+		panelInformations.setLayout(null);
+		
+		labelInformationsTitre.setForeground(Color.BLACK);
+		labelInformationsTitre.setFont(new Font("Tahoma", Font.BOLD, 13));
+		labelInformationsTitre.setHorizontalAlignment(SwingConstants.CENTER);
+		labelInformationsTitre.setBounds(10, 12, 100, 21);
+		panelInformations.add(labelInformationsTitre);
+	
+		informations.setForeground(Color.WHITE);
+		informations.setFont(new Font("Tahoma", Font.BOLD, 13));
+		informations.setBounds(125, 15, 285, 14);
+		panelInformations.add(informations);
+		
+		panelTemps.setBorder(new LineBorder(Color.BLACK, 3, true));
+		panelTemps.setBackground(Color.DARK_GRAY);
+		panelTemps.setBounds(115, 217, 124, 117);
+		mainLayout.add(panelTemps);
+		panelTemps.setLayout(null);
+		
+		lblTempsRestant.setForeground(Color.WHITE);
+		lblTempsRestant.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblTempsRestant.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTempsRestant.setBounds(10, 11, 102, 14);
+		panelTemps.add(lblTempsRestant);
+		
+		
+		temps.setForeground(Color.ORANGE);
+		temps.setFont(new Font("Tahoma", Font.PLAIN, 35));
+		temps.setHorizontalAlignment(SwingConstants.CENTER);
+		temps.setBounds(10, 36, 102, 70);
+		panelTemps.add(temps);
+		
+		panelCouleur.setBorder(new LineBorder(Color.BLACK, 3, true));
+		panelCouleur.setBackground(Color.DARK_GRAY);
+		panelCouleur.setBounds(115, 376, 124, 117);
+		mainLayout.add(panelCouleur);
+		panelCouleur.setLayout(null);
+		
+		lblObjectif.setForeground(Color.WHITE);
+		lblObjectif.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblObjectif.setHorizontalAlignment(SwingConstants.CENTER);
+		lblObjectif.setBounds(32, 11, 60, 14);
+		panelCouleur.add(lblObjectif);
+		
+		couleur.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
+		couleur.setBackground(new Color(123, 104, 238));
+		couleur.setBounds(32, 32, 60, 60);
+		panelCouleur.add(couleur);
+	}
+
+}

@@ -1,0 +1,96 @@
+package Model;
+
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.SocketException;
+
+import Behavior.Behavior;
+import BehaviorsServerSide.BehaviorServer;
+
+public class SocketHandler extends Thread {
+
+	protected Socket socket;
+	protected ObjectInputStream in;
+	protected ObjectOutputStream out;
+	protected Server server;
+	
+	public SocketHandler(Socket socket, Server server){
+		this.socket = socket;
+		this.server = server;
+		
+		try {
+			in = new ObjectInputStream(socket.getInputStream());
+			out = new ObjectOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		this.start();
+	}
+	
+	
+	
+	public ObjectInputStream getInput() {
+		return in;
+	}
+
+
+	public ObjectOutputStream getOutput() {
+		return out;
+	}
+
+
+
+
+	@SuppressWarnings("deprecation")
+	public void run(){
+					
+		while(true){
+			if(socket.isConnected() && ! socket.isClosed()){
+				try {		
+					Object received = in.readObject();
+					
+					if(received instanceof String){
+						BehaviorServer b = server.comportements.get(received);
+						b.setFrom(this);
+					
+						if(b.needObject())
+							b.setObject(in.readObject());
+						
+						b.execute();
+					}
+					
+					
+				} catch (IOException e) {
+							// TODO Auto-generated catch block
+					if(e.getMessage() == "Connection reset"){
+						server.removeSocket(this.getSocket());
+						this.stop();
+						this.destroy();
+					}
+				}catch (ClassNotFoundException e) {
+							// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+				
+			}
+		}
+
+	}
+	
+
+	public Socket getSocket() {
+		return socket;
+	}
+
+
+	
+	
+}

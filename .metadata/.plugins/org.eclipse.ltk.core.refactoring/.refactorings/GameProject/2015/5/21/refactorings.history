@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;View.View2D.Builder.ErrorWindowBuilder&apos; to &apos;ScoreWindowBuilder&apos;&#x0D;&#x0A;- Original project: &apos;GameProject&apos;&#x0D;&#x0A;- Original element: &apos;View.View2D.Builder.ErrorWindowBuilder&apos;&#x0D;&#x0A;- Renamed element: &apos;View.View2D.Builder.ScoreWindowBuilder&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;ErrorWindowBuilder&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;View.View2D.Builder{ScoreWindowBuilder.java[ErrorWindowBuilder" matchStrategy="1" name="ScoreWindowBuilder" qualified="false" references="true" similarDeclarations="false" stamp="1432280696683" textual="false" version="1.0"/>
+</session>

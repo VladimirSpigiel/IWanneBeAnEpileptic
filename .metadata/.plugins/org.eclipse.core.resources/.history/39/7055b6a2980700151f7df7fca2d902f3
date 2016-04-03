@@ -1,0 +1,83 @@
+package Controller;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+
+
+import utils.Formats;
+
+import Command.LoginCommand;
+
+import View.IObservable;
+
+public class StateControllerLogin extends AbstractStateController {
+
+	public StateControllerLogin(IObservable v) {
+		super(v);
+		// TODO Auto-generated constructor stub
+	}
+
+
+	public void update() {
+		// TODO Auto-generated method stub
+		//System.out.println(this.getClass().getName() + " Updated");
+		
+	}
+
+	public void keyPressed(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+			
+	}
+
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println(arg0.getKeyChar());
+		
+	}
+
+	public void mouseClicked(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+		
+	}
+
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+		
+	}
+
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println("ok");
+		
+	}
+
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void actionPerformed(java.awt.event.ActionEvent e) {
+	
+		if(e.getActionCommand() == "Se connecter"){
+			String pseudo = Formats.toString(this.getView().getData("pseudo"));
+			
+			if(pseudo.trim().length() > 5)
+				new LoginCommand(pseudo).execute();
+		}
+		
+	}
+
+
+}

@@ -1,0 +1,17 @@
+package Model;
+
+public abstract class Behavior {
+	
+	private Server server;
+	private boolean finished;
+	
+	public Behavior(Server s){
+		server = s;
+		finished = false;
+	}
+	
+	public abstract void execute();
+	
+	
+	
+}

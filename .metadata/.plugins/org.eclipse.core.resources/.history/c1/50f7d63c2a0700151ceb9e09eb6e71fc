@@ -1,0 +1,26 @@
+package BehaviorsServerSide;
+
+import Behavior.Behavior;
+import Model.Server;
+
+public abstract class BehaviorServer extends Behavior {
+	
+	protected Server server;
+	protected SocketHandler from;
+	
+	public BehaviorServer(Server s, boolean needObject){
+		super(needObject);
+		this.server = s;
+	}
+	
+	
+	public Server getServer() {
+		return server;
+	}
+
+	public void setServer(Server server) {
+		this.server = server;
+	}
+
+
+}

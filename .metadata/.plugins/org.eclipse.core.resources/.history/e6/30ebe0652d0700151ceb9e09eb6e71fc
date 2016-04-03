@@ -1,0 +1,18 @@
+package BehaviorsServerSide;
+
+import Model.Server;
+
+public class OnAcceptEndOfRound extends BehaviorServer {
+
+	public OnAcceptEndOfRound(Server s, boolean needObject) {
+		super(s, needObject);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void execute() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

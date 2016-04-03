@@ -1,0 +1,13 @@
+1433024976989	Move compilation unit
+1433026426570	Move compilation units
+1433028715099	Rename type 'OnPlayerReceive'
+1433029514993	Move compilation unit
+1433032194596	Rename compilation unit 'OnStop.java'
+1433032946550	Copy compilation unit
+1433032979858	Rename compilation unit 'BehaviorServer.java'
+1433034997599	Encapsulate field 'serverClosed'
+1433078880026	Delete elements
+1433078884555	Delete element
+1433098903150	Delete element
+1433098983171	Rename package 'BehaviorsClientSide'
+1433098997700	Rename package 'BehaviorsServerSide'

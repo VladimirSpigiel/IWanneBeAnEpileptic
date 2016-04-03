@@ -1,0 +1,198 @@
+package Model;
+
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+
+import BehaviorsServerSide.*;
+
+
+public class Server extends ServerSocket implements Runnable {
+
+	private Thread thread;
+	private boolean isRunning;
+	
+	
+
+	protected int capacity;
+	protected int port;
+	protected PlayerList players;
+	protected Map<String, SocketHandler> sockets;
+	protected Map<String, BehaviorServer> comportements;
+
+	protected Fight fight;
+	protected Difficulty difficulty;
+	
+	
+	
+	
+	
+	public Server(Difficulty d, int capacity) throws IOException {
+		super(4400);
+		thread = new Thread(this);
+		isRunning = false;
+		
+		this.difficulty = d;
+		this.capacity = capacity;
+		
+		players = new PlayerList();		
+		sockets = new HashMap<String, SocketHandler>();
+		
+		comportements = new HashMap<String, BehaviorServer>();
+		comportements.put("player", new OnPlayer(this));
+		comportements.put("join", new OnJoin(this));
+		comportements.put("start", new OnStart(this));
+		comportements.put("disconnect", new OnDisconnect(this));
+		comportements.put("acceptEndOfRound", new OnAcceptEndOfRound(this));
+
+	
+	}
+	
+	public void start(){
+		thread.start();
+		isRunning = true;
+		System.out.println("Server started");
+	}
+	
+	public PlayerList getPlayerList(){
+		return this.players;
+	}
+	
+	public Map<String, SocketHandler> getSocketsHandler(){
+		return this.sockets;
+	}
+	
+	public  synchronized void send(String message, Object o, SocketHandler s){
+
+		try {		
+			
+			s.getOutput().writeObject(message);
+			s.getOutput().flush();
+			if(o != null){
+				
+				
+				s.getOutput().writeObject(o);
+				s.getOutput().flush();
+				s.getOutput().reset();
+				
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	public void broadcast(String message, Object o) {
+		
+		
+		for (Entry<String, SocketHandler> socket : sockets.entrySet()){
+						
+			send(message, o, socket.getValue());
+		}
+	}
+	
+	public void broadcast(String message, Object o, Socket s){
+		for (Entry<String, SocketHandler> socket : sockets.entrySet()){
+			if( socket.getValue().getSocket().getPort() != s.getPort()){
+				send(message, o, socket.getValue());
+			}
+		}			
+	}
+	
+
+	
+	public void addSocket(Socket s){
+		if( sockets.size() + 1 < capacity)
+			sockets.put(String.valueOf(s.getPort()), new SocketHandler(s, this));
+		else{
+			try {
+				ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+				out.writeObject("full");
+				s.getOutputStream().flush();
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+			
+	}
+	
+	public void removeSocket(Socket s){
+		sockets.remove(String.valueOf(s.getPort()));
+		try {
+			s.close();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	
+	public Fight getFight() {
+		return fight;
+	}
+
+	public void setFight(Fight fight) {
+		this.fight = fight;
+	}
+	
+	
+
+	public Difficulty getDifficulty() {
+		return difficulty;
+	}
+
+	public void setDifficulty(Difficulty difficulty) {
+		this.difficulty = difficulty;
+	}
+
+
+	public void run() {
+		while(isRunning && this.thread.isAlive()){
+			//System.out.println(sockets.size() + " connecté ");
+			try {
+			
+				Socket s = this.accept();
+				this.addSocket(s);	
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}	
+		
+	}
+	
+	public void disconnect(){
+		broadcast("disconnect", null);
+		
+					
+		
+		try {
+			
+			super.close();
+			isRunning = false;
+			this.thread.stop();
+			
+			
+		} catch ( IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+
+}

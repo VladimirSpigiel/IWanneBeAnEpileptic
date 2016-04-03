@@ -1,0 +1,17 @@
+package BehaviorsServerSide;
+
+import Model.Server;
+
+public class OnStart extends BehaviorServer {
+
+	public OnStart(Server s) {
+		super(s, false);
+	}
+
+	@Override
+	public void execute() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

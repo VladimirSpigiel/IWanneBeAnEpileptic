@@ -1,0 +1,5 @@
+package BehaviorsServerSide;
+
+public class OnDisconnect extends BehaviorServer {
+
+}

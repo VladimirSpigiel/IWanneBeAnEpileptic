@@ -1,0 +1,35 @@
+package Model;
+
+import java.util.Random;
+
+public class ColoredCell extends Cell {
+
+	protected Color color;
+	private long seed = 5;
+	
+	
+	
+	public ColoredCell(int x, int y, int size){
+		super(x, y, size);
+		this.color = new Color();
+		
+		this.color.setR(new Random(seed).nextInt(255));
+		this.color.setG(new Random(seed).nextInt(255));
+		this.color.setB(new Random(seed).nextInt(255));
+		
+	}
+	
+	
+	
+	public void setColor(Color c){
+		this.color = c;
+	}
+	
+	public Color getColor(){
+		return this.color;
+	}
+
+	public String toString(){
+		return "[" + this.getY() + "," + this.getX() +"]" + color.toString() ;
+	}
+}

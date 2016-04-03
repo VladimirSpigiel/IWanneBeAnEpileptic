@@ -1,0 +1,19 @@
+package BehaviorsClientSide;
+
+import Model.Client;
+
+public class OnPlayer extends BehaviorClient {
+
+	public OnPlayer(Client c) {
+		super(c, true);
+	}
+
+	@Override
+	public void execute() {
+		
+		
+	}
+	
+	
+
+}

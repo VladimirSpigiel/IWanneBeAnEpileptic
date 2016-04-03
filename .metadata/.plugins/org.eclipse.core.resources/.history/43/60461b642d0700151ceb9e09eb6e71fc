@@ -1,0 +1,5 @@
+package BehaviorsServerSide;
+
+public class OnAcceptEndOfRound extends BehaviorServer {
+
+}

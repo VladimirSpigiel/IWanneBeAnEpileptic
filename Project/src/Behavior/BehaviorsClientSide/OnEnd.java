@@ -1,0 +1,16 @@
+package Behavior.BehaviorsClientSide;
+
+import Model.Client;
+
+public class OnEnd extends BehaviorClient {
+
+	public OnEnd(Client c) {
+		super(c, false);
+	}
+
+	@Override
+	public void execute() {
+		//
+	}
+
+}

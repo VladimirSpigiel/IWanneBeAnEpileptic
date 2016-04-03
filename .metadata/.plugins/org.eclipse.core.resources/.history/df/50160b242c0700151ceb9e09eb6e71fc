@@ -1,0 +1,12 @@
+package BehaviorsServerSide;
+
+import Model.Server;
+
+public class OnStop extends BehaviorServer {
+
+	public OnStop(Server s) {
+		super(s, true);
+		// TODO Auto-generated constructor stub
+	}
+
+}

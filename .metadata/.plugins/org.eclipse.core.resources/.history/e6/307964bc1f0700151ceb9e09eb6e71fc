@@ -1,0 +1,27 @@
+package BehaviorsServerSide;
+
+import Model.Server;
+
+public abstract class Behavior<String> {
+	
+	protected Server server;
+	protected Object object;
+	
+	public Behavior(Server s){
+		server = s;
+	}
+	
+	public abstract void execute();
+
+	public Server getServer() {
+		return server;
+	}
+
+	public void setServer(Server server) {
+		this.server = server;
+	}
+
+	
+	
+	
+}

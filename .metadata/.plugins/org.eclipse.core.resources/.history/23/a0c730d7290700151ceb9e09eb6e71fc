@@ -1,0 +1,12 @@
+package BehaviorsServerSide;
+
+import Model.Server;
+
+public class OnJoin extends BehaviorServer {
+
+	public OnJoin(Server s) {
+		super(s, true);
+		// TODO Auto-generated constructor stub
+	}
+
+}

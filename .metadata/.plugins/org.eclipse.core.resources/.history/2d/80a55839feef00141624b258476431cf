@@ -1,0 +1,10 @@
+package Model;
+
+public class Difficulty {
+	
+	private int width;
+	
+	private Difficulty(){
+		
+	}
+}

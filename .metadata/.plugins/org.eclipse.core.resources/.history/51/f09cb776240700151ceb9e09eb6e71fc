@@ -1,0 +1,22 @@
+package BehaviorsServerSide;
+
+import Model.Player;
+import Model.Server;
+
+public class OnPlayer extends Behavior {
+
+	
+	public OnPlayer(Server s, boolean n) {
+		super(s);
+	}	
+	
+
+	@Override
+	public void execute() {		
+		server.getPlayerList().replace((Player) getObject());
+		server.broadcast("players", server.getPlayerList());
+		System.out.println(server.getPlayerList());
+		
+	}
+
+}

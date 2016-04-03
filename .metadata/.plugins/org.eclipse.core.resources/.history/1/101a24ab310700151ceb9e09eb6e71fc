@@ -1,0 +1,20 @@
+package BehaviorsClientSide;
+
+import kernel.Game;
+import Model.Client;
+import Model.Grid;
+
+public class OnColor extends BehaviorClient {
+
+	public OnColor(Client c) {
+		super(c, true);
+	}
+
+	@Override
+	public void execute() {
+		Grid g = (Grid) getObject();
+		Game.getInstance().setGrid(g);	
+	}
+	
+	
+}
